@@ -5,8 +5,7 @@ CREATE TABLE todo (
     description TEXT(255)
 );
 
-ALTER TABLE todo
-ADD COLUMN isComplete BOOLEAN DEFAULT FALSE;
+ALTER TABLE todo ADD COLUMN isComplete BOOLEAN DEFAULT FALSE;
 
 SELECT * FROM todo;
 
