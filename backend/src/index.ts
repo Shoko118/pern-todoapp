@@ -1,6 +1,7 @@
 import cors from "cors";
 import { pool } from "./db";
 import express from "express";
+import env from "./env";
 
 const app = express();
 app.use(cors());
@@ -76,6 +77,6 @@ app.delete(
   }
 );
 
-app.listen(4000, () => {
-  console.log("Port 4000");
+app.listen(env.LOCALHOST_PORT, () => {
+  console.log(`Connected to port:${env.LOCALHOST_PORT}`);
 });
