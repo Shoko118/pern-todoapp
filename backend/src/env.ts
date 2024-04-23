@@ -1,13 +1,9 @@
-import { cleanEnv, str, num } from "envalid";
-import "dotenv/config";
+import 'dotenv/config';
 
-const env = cleanEnv(process.env, {
-  LOCALHOST_PORT: num(),
-  POOL_USER: str(),
-  POOL_PASSWORD: str(),
-  POOL_HOST: str(),
-  POOL_PORT: num(),
-  POOL_DATABASE: str(),
-});
+export const DB_USER = process.env.DB_USER;
+export const DB_PASSWORD = process.env.DB_PASSWORD;
+export const DB_HOST = process.env.DB_HOST;
+export const DB_PORT = process.env.DB_PORT;
+export const DB_DATABASE = process.env.DB_DATABASE;
 
-export default env;
+export const PORT = process.env.PORT;

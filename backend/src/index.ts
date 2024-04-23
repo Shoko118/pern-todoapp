@@ -1,14 +1,11 @@
-import cors from 'cors';
-import express from 'express';
-import env from './env';
-import todoRoutes from './routes/todo';
+import { PORT } from './env';
+import app from './app';
+import { AppDataSource } from './db';
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+async function main() {
+  await AppDataSource.initialize();
+  app.listen(PORT);
+  console.log(`Server is running on port ${PORT}`);
+}
 
-app.use('/todos', todoRoutes);
-
-app.listen(env.LOCALHOST_PORT, () => {
-  console.log(`Connected to port:${env.LOCALHOST_PORT}`);
-});
+main();
