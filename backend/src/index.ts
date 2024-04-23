@@ -7,39 +7,39 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// create todo
 app.post('/todos', async (req: express.Request, res: express.Response) => {
   try {
     const { description } = req.body;
     const newTodo = await pool.query('INSERT INTO todo (description) VALUES($1) RETURNING *', [description]);
-    res.json(newTodo.rows[0]);
+    res.status(200).json(newTodo.rows[0]);
   } catch (error) {
-    console.log(error);
+    res.status(500).json({ message: 'Failed to create todo' });
   }
 });
 
-// get todos
 app.get('/todos', async (req: express.Request, res: express.Response) => {
   try {
     const allTodos = await pool.query('SELECT * FROM todo');
-    res.json(allTodos.rows);
+    res.status(200).json(allTodos.rows);
   } catch (error) {
-    console.log('GET TODOS ERR', error);
+    res.status(500).json({ message: 'Failed to get all todos' });
   }
 });
 
-// get a todo
 app.get('/todos/:id', async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
+
     const todo = await pool.query('SELECT * FROM todo WHERE todo_id = $1 RETURNING *', [id]);
-    res.json(todo.rows[0]);
+
+    if (todo.rows.length === 0) return res.status(404).json({ message: 'Todo not found' });
+
+    res.status(200).json(todo.rows[0]);
   } catch (error) {
-    console.log('GET A TODO ERR', error);
+    res.status(500).json({ message: 'Failed to get a todo' });
   }
 });
 
-// update a todo
 app.put('/todos/:id', async (req: express.Request, res: express.Response) => {
   const { id } = req.params;
   const { description, iscomplete } = req.body;
@@ -73,7 +73,6 @@ app.put('/todos/:id', async (req: express.Request, res: express.Response) => {
   }
 });
 
-// delete a todo
 app.delete('/todos/:id', async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
@@ -82,7 +81,7 @@ app.delete('/todos/:id', async (req: express.Request, res: express.Response) => 
 
     res.status(202).json(deleteTodo.rows[0]);
   } catch (error) {
-    console.log('DELETE A TODO ERR', error);
+    res.status(500).json({ message: 'Failed to delete todo' });
   }
 });
 
