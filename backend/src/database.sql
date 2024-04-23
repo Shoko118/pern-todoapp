@@ -12,4 +12,4 @@ SELECT * FROM todo;
 
 INSERT INTO todo(description) VALUES('HELLO')
 
-UPDATE todo SET description = $1 WHERE todo_id = $2
+UPDATE todo SET description = $1, iscomplete = $2 WHERE todo_id = $3
