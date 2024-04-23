@@ -5,6 +5,11 @@ CREATE TABLE todo (
     description TEXT(255)
 );
 
+ALTER TABLE todo
+ADD COLUMN isComplete BOOLEAN DEFAULT FALSE;
+
 SELECT * FROM todo;
 
 INSERT INTO todo(description) VALUES('HELLO')
+
+UPDATE todo SET description = $1 WHERE todo_id = $2

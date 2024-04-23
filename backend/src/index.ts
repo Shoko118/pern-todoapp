@@ -1,20 +1,17 @@
-import cors from "cors";
-import { pool } from "./db";
-import express from "express";
-import env from "./env";
+import cors from 'cors';
+import { pool } from './db';
+import express from 'express';
+import env from './env';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 // create todo
-app.post("/todos", async (req: express.Request, res: express.Response) => {
+app.post('/todos', async (req: express.Request, res: express.Response) => {
   try {
     const { description } = req.body;
-    const newTodo = await pool.query(
-      "INSERT INTO todo (description) VALUES($1) RETURNING *",
-      [description]
-    );
+    const newTodo = await pool.query('INSERT INTO todo (description) VALUES($1) RETURNING *', [description]);
     res.json(newTodo.rows[0]);
   } catch (error) {
     console.log(error);
@@ -22,60 +19,72 @@ app.post("/todos", async (req: express.Request, res: express.Response) => {
 });
 
 // get todos
-app.get("/todos", async (req: express.Request, res: express.Response) => {
+app.get('/todos', async (req: express.Request, res: express.Response) => {
   try {
-    const allTodos = await pool.query("SELECT * FROM todo");
+    const allTodos = await pool.query('SELECT * FROM todo');
     res.json(allTodos.rows);
   } catch (error) {
-    console.log("GET TODOS ERR", error);
+    console.log('GET TODOS ERR', error);
   }
 });
 
 // get a todo
-app.get("/todos/:id", async (req: express.Request, res: express.Response) => {
+app.get('/todos/:id', async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
-    const todo = await pool.query("SELECT * FROM todo WHERE todo_id = $1", [
-      id,
-    ]);
+    const todo = await pool.query('SELECT * FROM todo WHERE todo_id = $1 RETURNING *', [id]);
     res.json(todo.rows[0]);
   } catch (error) {
-    console.log("GET A TODO ERR", error);
+    console.log('GET A TODO ERR', error);
   }
 });
 
 // update a todo
-app.put("/todos/:id", async (req: express.Request, res: express.Response) => {
+app.put('/todos/:id', async (req: express.Request, res: express.Response) => {
+  const { id } = req.params;
+  const { description, iscomplete } = req.body;
+
+  const sets = [];
+  const todoIds = [];
+
   try {
-    const { id } = req.params;
-    const { description } = req.body;
+    if (description !== undefined) {
+      sets.push('description = $1');
+      todoIds.push(description);
+    }
 
-    await pool.query("UPDATE todo SET description = $1 WHERE todo_id = $2", [
-      description,
-      id,
-    ]);
+    if (iscomplete !== undefined) {
+      sets.push('iscomplete = $' + (todoIds.length + 1));
+      todoIds.push(iscomplete);
+    }
 
-    res.json("Updated a todo");
+    if (sets.length === 0) {
+      return res.status(400).json({ error: 'No valid fields provided for update' });
+    }
+
+    todoIds.push(id);
+    const updateQuery = `UPDATE todo SET ${sets.join(', ')} WHERE todo_id = $${todoIds.length} RETURNING *`;
+    console.log(updateQuery);
+
+    const updateResult = await pool.query(updateQuery, todoIds);
+    res.status(201).json(updateResult.rows[0]);
   } catch (error) {
-    console.log("UPDATE A TODO ERR", error);
+    res.status(500).json({ error: 'Failed to update todo' });
   }
 });
 
 // delete a todo
-app.delete(
-  "/todos/:id",
-  async (req: express.Request, res: express.Response) => {
-    try {
-      const { id } = req.params;
+app.delete('/todos/:id', async (req: express.Request, res: express.Response) => {
+  try {
+    const { id } = req.params;
 
-      await pool.query("DELETE FROM todo WHERE todo_id = $1", [id]);
+    const deleteTodo = await pool.query('DELETE FROM todo WHERE todo_id = $1 RETURNING *', [id]);
 
-      res.json("Deleted a todo");
-    } catch (error) {
-      console.log("DELETE A TODO ERR", error);
-    }
+    res.status(202).json(deleteTodo.rows[0]);
+  } catch (error) {
+    console.log('DELETE A TODO ERR', error);
   }
-);
+});
 
 app.listen(env.LOCALHOST_PORT, () => {
   console.log(`Connected to port:${env.LOCALHOST_PORT}`);
