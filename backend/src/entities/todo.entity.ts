@@ -9,5 +9,5 @@ export class Todo extends BaseEntity {
   description: string;
 
   @Column({ default: false, type: 'boolean' })
-  iscomplete: boolean; // Changed from iscomplete to isComplete and type to boolean
+  is_completed: boolean; // Changed from iscomplete to isComplete and type to boolean
 }

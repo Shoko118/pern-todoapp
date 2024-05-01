@@ -25,7 +25,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)({ default: false, type: 'boolean' }),
     __metadata("design:type", Boolean)
-], Todo.prototype, "iscomplete", void 0);
+], Todo.prototype, "is_completed", void 0);
 exports.Todo = Todo = __decorate([
     (0, typeorm_1.Entity)('todo')
 ], Todo);
