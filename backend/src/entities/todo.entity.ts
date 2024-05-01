@@ -3,9 +3,9 @@ import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @Entity('todo')
 export class Todo extends BaseEntity {
   @PrimaryGeneratedColumn()
-  todo_id: number;
+  id: number;
 
-  @Column()
+  @Column({ type: 'text', nullable: true })
   description: string;
 
   @Column({ default: false, type: 'boolean' })

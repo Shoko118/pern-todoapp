@@ -1,7 +1,7 @@
 CREATE DATABSE datatodo 
 
 CREATE TABLE todo (
-    todo_id SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     description TEXT(255)
 );
 
@@ -11,4 +11,4 @@ SELECT * FROM todo;
 
 INSERT INTO todo(description) VALUES('HELLO')
 
-UPDATE todo SET description = $1, iscomplete = $2 WHERE todo_id = $3
+UPDATE todo SET description = $1, iscomplete = $2 WHERE id = $3

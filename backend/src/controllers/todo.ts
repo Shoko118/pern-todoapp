@@ -13,7 +13,7 @@ export async function getTodos(req: Request, res: Response) {
 export async function getTodo(req: Request, res: Response) {
   try {
     const id = parseInt(req.params.id);
-    const todo = await Todo.findOneBy({ todo_id: id });
+    const todo = await Todo.findOneBy({ id: id });
 
     if (!todo) return res.status(404).json({ message: 'Todo not found' });
 
@@ -39,7 +39,7 @@ export async function updateTodo(req: Request, res: Response) {
   try {
     const id = parseInt(req.params.id);
     const { description, iscomplete } = req.body;
-    const todo = await Todo.findOneBy({ todo_id: id });
+    const todo = await Todo.findOneBy({ id: id });
 
     if (!todo) return res.status(404).json({ error: 'Todo not found' });
 
